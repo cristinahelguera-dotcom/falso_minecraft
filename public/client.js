@@ -38,7 +38,7 @@ function addRemotePlayer(id, p){
 
   const head = new THREE.Mesh(new THREE.BoxGeometry(0.8,0.8,0.8), new THREE.MeshLambertMaterial({color:0xffaaaa}));
   head.position.y = 2.4; // encima del cuerpo
-
+  
   group.add(body);
   group.add(head);
 
@@ -49,14 +49,27 @@ function addRemotePlayer(id, p){
 }
 
 function updateRemotePlayer(id, p){
-  const mesh = otherPlayers[id];
-  if(mesh) {
-	  //mesh.position.set(p.x, p.y, p.z);
-	  //mesh.rotation.y = p.rotationY; // agregar rotación
-	   // Interpolación lineal (lerp)
-		mesh.position.lerp(new THREE.Vector3(p.x, p.y, p.z), 0.2);
-		mesh.rotation.y += (p.rotationY - mesh.rotation.y) * 0.2;
-	}
+   const mesh = otherPlayers[id];
+  if(mesh){
+    // posición horizontal con interpolación
+    mesh.position.x += (p.x - mesh.position.x)*0.2;
+    mesh.position.z += (p.z - mesh.position.z)*0.2;
+
+    // encontrar bloque más cercano debajo
+    const downRay = new THREE.Raycaster(
+      new THREE.Vector3(p.x, 50, p.z), // empezar desde arriba
+      new THREE.Vector3(0,-1,0),
+      0,
+      100
+    );
+    const hits = downRay.intersectObjects(blocks);
+    if(hits.length>0){
+      mesh.position.y = hits[0].point.y + 1; // altura del jugador
+    }
+
+    // rotación
+    mesh.rotation.y += (p.rotationY - mesh.rotation.y)*0.2;
+  }
 }
 
 function removeRemotePlayer(id){
@@ -295,15 +308,20 @@ document.addEventListener('mousedown', e=>{
 function update(){
   time += 0.016;
 
-  // ciclo día/noche cada 30s
-  const cycle = Math.floor(time / 30) % 2;
-  if(cycle === 0){
-    scene.background = new THREE.Color(0x87CEEB);
-    light.intensity = 1;
-  } else {
-    scene.background = new THREE.Color(0x000022);
-    light.intensity = 0.2;
-  }
+	// ciclo día/noche cada 30s
+	const DAY_DURATION = 600; // 10 minutos = 600s
+
+	// ciclo día/noche
+	const cycle = Math.floor(time / DAY_DURATION) % 2;
+	if(cycle === 0){
+	  // día
+	  scene.background = new THREE.Color(0x87CEEB);
+	  light.intensity = 1;
+	} else {
+	  // noche
+	  scene.background = new THREE.Color(0x000022);
+	  light.intensity = 0.2;
+	}
 
   // mover el sol con el jugador
   const playerPos = controls.getObject().position;
@@ -354,5 +372,6 @@ function animate(){
   //sendPlayerUpdate();
   setInterval(sendPlayerUpdate, 1000/15); 
 }
+
 animate();
 
