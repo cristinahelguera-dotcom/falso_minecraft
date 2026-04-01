@@ -27,15 +27,36 @@ socket.addEventListener('message', e=>{
 });
 
 function addRemotePlayer(id, p){
-  const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xff0000}));
-  mesh.position.set(p.x, p.y, p.z);
-  scene.add(mesh);
-  otherPlayers[id] = mesh;
+  //const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xff0000}));
+  //mesh.position.set(p.x, p.y, p.z);
+  //scene.add(mesh);
+  //otherPlayers[id] = mesh;
+  const group = new THREE.Group();
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1,2,0.5), new THREE.MeshLambertMaterial({color:0xff0000}));
+  body.position.y = 1; // cuerpo desde y=0 a y=2
+
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.8,0.8,0.8), new THREE.MeshLambertMaterial({color:0xffaaaa}));
+  head.position.y = 2.4; // encima del cuerpo
+
+  group.add(body);
+  group.add(head);
+
+  group.position.set(p.x, p.y, p.z);
+  scene.add(group);
+
+  otherPlayers[id] = group;
 }
 
 function updateRemotePlayer(id, p){
   const mesh = otherPlayers[id];
-  if(mesh) mesh.position.set(p.x, p.y, p.z);
+  if(mesh) {
+	  //mesh.position.set(p.x, p.y, p.z);
+	  //mesh.rotation.y = p.rotationY; // agregar rotación
+	   // Interpolación lineal (lerp)
+		mesh.position.lerp(new THREE.Vector3(p.x, p.y, p.z), 0.2);
+		mesh.rotation.y += (p.rotationY - mesh.rotation.y) * 0.2;
+	}
 }
 
 function removeRemotePlayer(id){
@@ -52,7 +73,7 @@ function sendPlayerUpdate(){
   const obj = controls.getObject();
   socket.send(JSON.stringify({
     type:'update',
-    player:{ x: obj.position.x, y: obj.position.y, z: obj.position.z }
+    player:{ x: obj.position.x, y: obj.position.y, z: obj.position.z, rotationY: obj.rotation.y, isJumping: velocity.y > 0.1 }
   }));
 }
 
@@ -330,7 +351,8 @@ function animate(){
   requestAnimationFrame(animate);
   update();
   renderer.render(scene,camera);
-  sendPlayerUpdate();
+  //sendPlayerUpdate();
+  setInterval(sendPlayerUpdate, 1000/15); 
 }
 animate();
 

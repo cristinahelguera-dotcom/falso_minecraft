@@ -1,0 +1,38 @@
+Exacto, si quieres modificar o mejorar tu juego y luego actualizarlo en el servidor público (Render/GitHub), el flujo correcto con Git es muy sencillo. Te explico paso a paso:
+
+1️⃣ Modificar tu juego localmente
+Abre tu proyecto en D:\Falso_Minecraft.
+Cambia lo que necesites: bloques, controles, día/noche, texturas, multijugador, etc.
+Guarda todos los archivos modificados (index.html, client.js, server.js, etc.).
+2️⃣ Ver qué archivos han cambiado
+
+Abre terminal en la carpeta del proyecto y ejecuta:
+
+git status
+Verás una lista de archivos modificados, añadidos o eliminados.
+Por ejemplo:
+modified: client.js
+modified: server.js
+3️⃣ Guardar los cambios en Git
+Añade los cambios:
+git add .
+Haz un commit describiendo lo que cambiaste:
+git commit -m "Mejoras: día/noche más suave y bloques nuevos"
+Siempre escribe mensajes claros para saber qué cambiaste.
+4️⃣ Subir los cambios a GitHub
+git push origin main
+Esto actualiza el repositorio remoto en GitHub con tus cambios.
+Render detectará automáticamente el nuevo commit y desplegará tu proyecto actualizado si está vinculado a tu repo.
+5️⃣ Render actualiza el juego
+Si tu proyecto está conectado a GitHub en Render, el servicio puede hacer deploy automático o puedes hacer clic en “Manual Deploy” en Render.
+Una vez desplegado, tu URL pública seguirá siendo la misma, pero con las nuevas funcionalidades.
+6️⃣ Consejos adicionales
+Para cambios grandes, haz commits frecuentes.
+Siempre prueba primero localmente ejecutando:
+node server.js
+Luego sube los cambios a GitHub y Render.
+Si agregas nuevas dependencias (npm install xxx), asegúrate de que queden reflejadas en package.json para que Render las instale automáticamente.
+
+💡 Resumen rápido del flujo de actualización:
+
+[Modificar archivos localmente] → git add . → git commit -m "mensaje" → git push origin main → Render actualiza automáticamente
