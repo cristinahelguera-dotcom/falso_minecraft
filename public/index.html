@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Minecraft Básico Arreglado</title>
+<style>
+body { margin: 0; overflow: hidden; }
+#crosshair { position: absolute; top:50%; left:50%; width:6px; height:6px; margin:-3px; background:white; }
+#pauseOverlay{
+position:absolute;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.5);
+backdrop-filter:blur(5px);
+display:none;justify-content:center;align-items:center;
+color:white;font-size:40px;
+}
+</style>
+</head>
+<body>
+<div id="crosshair"></div>
+<div id="pauseOverlay">JUEGO EN PAUSA</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/PointerLockControls.js"></script>
+<script src="client.js"></script>>
+</body>
+</html>
